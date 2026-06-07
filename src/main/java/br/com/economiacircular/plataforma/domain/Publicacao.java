@@ -1,4 +1,5 @@
-
+package br.com.economiacircular.plataforma.domain;  
+   
 import jakarta.persistence.*;
 
 @Entity
@@ -10,14 +11,15 @@ public class Publicacao {
     private Long id;
     private String titulo;
     private String tipo;
-    private Interger ValorCredito;
+    private String descricao;
+    private Integer valorCreditos;
 
 
      @Enumerated(EnumType.STRING)
     private StatusPublicacao status = StatusPublicacao.DISPONIVEL;
 
 
-    
+
      @ManyToOne
     @JoinColumn(name = "dono_id")
     private Usuario dono;

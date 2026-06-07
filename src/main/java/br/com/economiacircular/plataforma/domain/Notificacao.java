@@ -1,14 +1,12 @@
-import jakarta.persistence.Entity;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+package br.com.economiacircular.plataforma.domain;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.JoinColumn;
 
 @Entity
-@Table(name="Notificacao")
+@Table(name="notificacoes")
 public class Notificacao {
 
     @Id
@@ -21,7 +19,7 @@ public class Notificacao {
 
     private String mensagem;
 
-    private LocalDateTime criadaEm = LocalDataTime.now();
+    private LocalDateTime  criadaEm = LocalDateTime.now();
 
     public Long getId() {
         

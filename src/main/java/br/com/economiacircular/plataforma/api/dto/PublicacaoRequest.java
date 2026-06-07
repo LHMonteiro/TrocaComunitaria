@@ -1,11 +1,12 @@
+package br.com.economiacircular.plataforma.api.dto;  
 
 import org.hibernate.boot.beanvalidation.IntegrationException;
 
-public class PublicacaoRqeust {
+public class PublicacaoRequest {
     public String titulo;
     public String descricao;
     public String tipo;
-    public Integer valorCredito;
+    public Integer valorCreditos;
     public Long usuarioId;
     
 }

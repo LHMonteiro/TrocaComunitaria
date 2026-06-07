@@ -1,15 +1,12 @@
-import java.time.LocalDateTime;
+package br.com.economiacircular.plataforma.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="Transicao")
-public class Transicao{
+@Table(name="transacoes")
+public class Transacao{
 
 
     @Id
@@ -18,18 +15,20 @@ public class Transicao{
  
 
     @ManyToOne
-    @JoinColumn(name="publicao_id")
-    private  Publicacao publicao;
+    @JoinColumn(name="publicacao_id")
+    private  Publicacao publicacao;
 
+    @ManyToOne
+    @JoinColumn(name="pagador_id")
+    private Usuario pagador;
 
     @ManyToOne
     @JoinColumn(name="recebedor_id")
     private Usuario recebedor;
 
+    private Integer creditos;
 
-    private Integer credito;
-
-    private LocalDateTime CriadaEm = LocalDateTime.now();
+    private LocalDateTime criadaEm = LocalDateTime.now();
 
     public Long getId() { 
         return id; }

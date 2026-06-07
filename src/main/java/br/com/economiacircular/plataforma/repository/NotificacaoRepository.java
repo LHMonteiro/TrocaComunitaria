@@ -1,4 +1,6 @@
 
+package br.com.economiacircular.plataforma.repository; 
+
 import br.com.economiacircular.plataforma.domain.Notificacao;
 
 import org.springframework.data.jpa.repository.JpaRepository;     

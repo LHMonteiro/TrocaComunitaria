@@ -1,17 +1,17 @@
 C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\domain\Usuario.java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\api\dto\SolicitacaoRequets.java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\domain\statusDaPublicacao.java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\repository\NotificacaoRepository .java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\repository\TransacaoRepository.java
 C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\domain\Solicitacao.java
 C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\domain\Publicacao.java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\domain\StatusSolicitacao.java
 C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\domain\Notificacao.java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\repository\SolicitacaoRepositor.java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\domain\statusDaSolicitacao.java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\domain\StatusPublicacao.java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\domain\Transacao.java
 C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\PlataformaApplication.java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\api\dto\PublicacaoRequest.java
 C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\api\dto\LoginRequest.java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\repository\PublicacaoDoRepository.java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\api\SistemaDeController.java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\repository\UsuarioDoRepository.java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\repository\TransacaoRepository .java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\api\dto\PublicacaoRqeust.java
-C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\domain\Transicao.java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\api\dto\SolicitacaoRequest.java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\repository\PublicacaoRepository.java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\repository\SolicitacaoRepository.java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\repository\UsuarioRepository.java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\api\SistemaController.java
+C:\Users\vicen\OneDrive\Documentos\TrocaComunitaria\src\main\java\br\com\economiacircular\plataforma\repository\NotificacaoRepository.java

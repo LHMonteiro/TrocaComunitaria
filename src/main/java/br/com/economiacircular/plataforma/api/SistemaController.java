@@ -1,31 +1,41 @@
+package br.com.economiacircular.plataforma.api;
 
+import br.com.economiacircular.plataforma.api.dto.LoginRequest;
+import br.com.economiacircular.plataforma.api.dto.PublicacaoRequest;
+import br.com.economiacircular.plataforma.api.dto.SolicitacaoRequest;
+import br.com.economiacircular.plataforma.domain.*;
 import br.com.economiacircular.plataforma.repository.*;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
-public class SistemaDeController {
+@RestController
+public class SistemaController {
 
-    private final UsuarioDoRepository usuario;  
-    private final TransacaoRepository transacao; 
-    private final SolicitacaoRepositor solicitaco;   
-    private final PublicacaoDoRepository publicacao;  
-    private final NotificacaoRepository notificacao;    
+    private final UsuarioRepository usuarios;  
+    private final PublicacaoRepository publicacoes;  
+    private final SolicitacaoRepository solicitacoes;    
+    private final NotificacaoRepository notificacoes;   
+    private final TransacaoRepository transacoes;     
 
-    public SistemaDeController(UsuarioDoRepository usuario,
-                                TransacaoRepository transacao,
-                                SolicitacaoRepositor solicitaco,
-                                PublicacaoDoRepository publicacao,
-                                NotificacaoRepository notificacao){
-        this.usuarios = usuarios;
-        this.publicacoes = publicacoes;
-        this.solicitacoes = solicitacoes;
-        this.notificacoes = notificacoes;
-        this.transacoes = transacoes;
-         
-    }     
+   public SistemaController(UsuarioRepository usuarios,
+                         PublicacaoRepository publicacoes,
+                         SolicitacaoRepository solicitacoes,
+                         NotificacaoRepository notificacoes,
+                         TransacaoRepository transacoes) {
+    this.usuarios = usuarios;
+    this.publicacoes = publicacoes;
+    this.solicitacoes = solicitacoes;
+    this.notificacoes = notificacoes;
+    this.transacoes = transacoes;
+}
 
     @PostMapping("/api/usuarios")
     @ResponseStatus(HttpStatus.CREATED)
-    public Usuario cadastrarDEUsuario(@RequestBody Usuario usuario) {
+    public Usuario cadastrarUsuario(@RequestBody Usuario usuario) {
 
         if (usuario.getSaldoCreditos() == null) {
 
@@ -36,7 +46,7 @@ public class SistemaDeController {
     }
 
     @PostMapping("/api/usuarios/login")
-    public Usuario loginDeUsuario(@RequestBody LoginRequest request) {
+    public Usuario loginUsuario(@RequestBody LoginRequest request) {
 
         Usuario usuario = buscarUsuarioPorEmail(request.email);
 
@@ -49,7 +59,7 @@ public class SistemaDeController {
     }
 
     @GetMapping("/api/usuarios/{id}")
-    public Usuario buscarDeUsuario(@PathVariable Long id) {
+    public Usuario buscarUsuario(@PathVariable Long id) {
 
         return usuarios.findById(id)
 

@@ -1,57 +1,59 @@
+package br.com.economiacircular.plataforma.domain;
+
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Solicitacao")
+@Table(name = "solicitacoes")
 
 public class Solicitacao {
     
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.IDENTITY)      
     private Long id;
+      
+
+    @ManyToOne     
+    @JoinColumn(name="publicacao_id")      
+    private Publicacao publicacao;    
 
 
     @ManyToOne
-    @JoinColumn(name="Publicacao")
-    private Publicacao publicacao;
+    @JoinColumn(name="interessado_id")           
+    private Usuario interessado;      
+      
 
+    @Enumerated(EnumType.STRING)   
+    private StatusSolicitacao  status = StatusSolicitacao.PENDENTE;    
+       
+    public Long getId() {   
+        return id; }     
 
-    @ManyToOne
-    @JoinColumn(name="interessado_id")
-    private Usuario interesado;
-
-
-    @Enumerated(EnumType.STRING)
-    private StatusDaSolicitacao status = StatusDaSolicitacao.PENDENTE;
-
-    public Long getId() { 
-        return id; }
-
-
-    public void setId(Long id) { 
-        this.id = id; 
+              
+    public void setId(Long id) {     
+        this.id = id;      
     }
 
 
-    public Publicacao getPublicacao() { 
+    public Publicacao getPublicacao() {      
      
         return publicacao; 
     }
 
 
-    public void setPublicacao(Publicacao publicacao) { 
-        this.publicacao = publicacao; 
+    public void setPublicacao(Publicacao publicacao) {     
+        this.publicacao = publicacao;     
     }
 
     public Usuario getInteressado() { 
-        return interessado; }
+        return interessado; }     
 
-    public void setInteressado(Usuario interessado) { 
-        this.interessado = interessado; }
+    public void setInteressado(Usuario   interessado) { 
+        this.interessado = interessado; }   
     public StatusSolicitacao getStatus() {
-         return status; 
+         return status;    
         }
-
-    public void setStatus(StatusSolicitacao status) { 
-        this.status = status; 
-    }
+           
+    public void setStatus(StatusSolicitacao status) {    
+        this.status = status;     
+    }     
 }
