@@ -1,0 +1,253 @@
+
+import br.com.economiacircular.plataforma.repository.*;
+
+
+public class SistemaDeController {
+
+    private final UsuarioDoRepository usuario;  
+    private final TransacaoRepository transacao; 
+    private final SolicitacaoRepositor solicitaco;   
+    private final PublicacaoDoRepository publicacao;  
+    private final NotificacaoRepository notificacao;    
+
+    public SistemaDeController(UsuarioDoRepository usuario,
+                                TransacaoRepository transacao,
+                                SolicitacaoRepositor solicitaco,
+                                PublicacaoDoRepository publicacao,
+                                NotificacaoRepository notificacao){
+        this.usuarios = usuarios;
+        this.publicacoes = publicacoes;
+        this.solicitacoes = solicitacoes;
+        this.notificacoes = notificacoes;
+        this.transacoes = transacoes;
+         
+    }     
+
+    @PostMapping("/api/usuarios")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Usuario cadastrarDEUsuario(@RequestBody Usuario usuario) {
+
+        if (usuario.getSaldoCreditos() == null) {
+
+            usuario.setSaldoCreditos(100);
+        }
+
+         return usuarios.save(usuario);
+    }
+
+    @PostMapping("/api/usuarios/login")
+    public Usuario loginDeUsuario(@RequestBody LoginRequest request) {
+
+        Usuario usuario = buscarUsuarioPorEmail(request.email);
+
+        if (!usuario.getSenha().equals(request.senha)) {
+
+            throw new IllegalArgumentException("Senha incorreta");
+        }
+
+         return usuario;
+    }
+
+    @GetMapping("/api/usuarios/{id}")
+    public Usuario buscarDeUsuario(@PathVariable Long id) {
+
+        return usuarios.findById(id)
+
+                .orElseThrow(() -> new EntityNotFoundException("Usuario nao encontrado"));
+    }
+
+    @PostMapping("/api/publicacoes")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Publicacao criacaoDePublicacao(@RequestBody PublicacaoRequest request) {
+        
+        Publicacao publicacao = new Publicacao();
+        
+        publicacao.setTitulo(request.titulo);
+        publicacao.setDescricao(request.descricao);
+        publicacao.setTipo(request.tipo);
+        publicacao.setValorCreditos(request.valorCreditos);
+        publicacao.setDono(buscarUsuario(request.usuarioId));
+        
+            return publicacoes.save(publicacao);
+    }
+
+    @GetMapping("/api/publicacoes/feed/{usuarioId}")
+    public List<Publicacao> feed(@PathVariable Long usuarioId) {
+        
+        buscarUsuario(usuarioId);
+         return publicacoes.findByStatusAndDonoIdNot(StatusPublicacao.DISPONIVEL, usuarioId);
+    }
+
+    @GetMapping("/api/publicacoes/usuario/{usuarioId}")
+    public List<Publicacao> publicacoesDoUsuario(@PathVariable Long usuarioId) {
+        
+        return publicacoes.findByDonoId(usuarioId);
+    
+    }
+
+    @PatchMapping("/api/publicacoes/{id}/cancelar")
+    public Publicacao cancelamentoDePublicacao(@PathVariable Long id, @RequestBody PublicacaoRequest request) {
+        Publicacao publicacao = buscarPublicacao(id);
+        
+        if (!publicacao.getDono().getId().equals(request.usuarioId)) {
+            
+            throw new IllegalArgumentException("Somente o dono pode cancelar esta publicacao");
+        
+        }
+        
+        publicacao.setStatus(StatusPublicacao.CANCELADA);
+         
+        return publicacoes.save(publicacao);       
+    }
+                                
+    @PostMapping("/api/solicitacoes/publicacao/{publicacaoId}")         
+    @ResponseStatus(HttpStatus.CREATED)    
+    public Solicitacao pedidoPublicacao(@PathVariable Long publicacaoId,    
+                                       @RequestBody SolicitacaoRequest request) {
+        Publicacao publicacao = buscarPublicacao(publicacaoId);      
+        
+        Usuario interessado = buscarUsuario(request.usuarioId);     
+
+        if (publicacao.getDono().getId().equals(interessado.getId())) {    
+           
+            throw new IllegalArgumentException("Voce nao pode pedir sua propria publicacao");      
+        }
+
+        if (publicacao.getStatus() != StatusPublicacao.DISPONIVEL) {
+            throw new IllegalArgumentException("Esta publicacao nao esta disponivel");       
+              
+        }
+                                    
+        Solicitacao solicitacao = new Solicitacao();
+        solicitacao.setPublicacao(publicacao);
+        solicitacao.setInteressado(interessado);
+
+        publicacao.setStatus(StatusPublicacao.RESERVADA);
+        publicacoes.save(publicacao);
+
+        criarNotificacao(publicacao.getDono(),
+                interessado.getNome() + " tem interesse em: " + publicacao.getTitulo());
+
+        return solicitacoes.save(solicitacao);
+    }      
+
+    @GetMapping("/api/solicitacoes/recebidas/{usuarioId}")
+    public List<Solicitacao> solicitacoesRecebidas(@PathVariable Long usuarioId) {
+        return solicitacoes.findByPublicacaoDonoId(usuarioId);
+    }
+
+    @PostMapping("/api/solicitacoes/{id}/aceitar")
+    @Transactional
+    public Solicitacao aceitarSolicitacao(@PathVariable Long id, @RequestBody SolicitacaoRequest request) {
+        
+        Solicitacao solicitacao = buscarSolicitacao(id);
+        Publicacao publicacao = solicitacao.getPublicacao();
+        Usuario dono = publicacao.getDono();
+        Usuario interessado = solicitacao.getInteressado();
+
+        if (!dono.getId().equals(request.usuarioId)) {
+            
+            throw new IllegalArgumentException("Somente o dono pode aceitar esta solicitacao");
+        
+        }  
+              
+        if (solicitacao.getStatus() != StatusSolicitacao.PENDENTE) {    
+                     
+            throw new IllegalArgumentException("Esta solicitacao ja foi respondida");
+        
+        }   
+
+        if (interessado.getSaldoCreditos() < publicacao.getValorCreditos()) {
+                 
+            throw new IllegalArgumentException("O interessado nao tem creditos suficientes");
+        
+        }    
+                                      
+        interessado.setSaldoCreditos(interessado.getSaldoCreditos() - publicacao.getValorCreditos());
+        dono.setSaldoCreditos(dono.getSaldoCreditos() + publicacao.getValorCreditos());
+        usuarios.save(interessado);
+        usuarios.save(dono);
+
+        publicacao.setStatus(StatusPublicacao.CONCLUIDA);
+        publicacoes.save(publicacao);
+
+        solicitacao.setStatus(StatusSolicitacao.ACEITA);
+        solicitacoes.save(solicitacao);
+
+        Transacao transacao = new Transacao();
+        transacao.setPublicacao(publicacao);
+        transacao.setPagador(interessado);
+        transacao.setRecebedor(dono);
+        transacao.setCreditos(publicacao.getValorCreditos());
+        transacoes.save(transacao);
+
+        criarNotificacao(dono, "Troca concluida: " + publicacao.getTitulo()
+                + ". Contato: " + interessado.getContato());
+        criarNotificacao(interessado, "Troca concluida: " + publicacao.getTitulo()
+                + ". Contato: " + dono.getContato());
+
+        return solicitacao;
+    }
+
+    @PostMapping("/api/solicitacoes/{id}/recusar")
+    @Transactional
+    public Solicitacao recusarSolicitacao(@PathVariable Long id, @RequestBody SolicitacaoRequest request) {
+       
+        Solicitacao solicitacao = buscarSolicitacao(id);      
+        Publicacao publicacao = solicitacao.getPublicacao();   
+
+        if (!publicacao.getDono().getId().equals(request.usuarioId)) {    
+            throw new IllegalArgumentException("Somente o dono pode recusar esta solicitacao");
+        }
+                                              
+        solicitacao.setStatus(StatusSolicitacao.RECUSADA);       
+        publicacao.setStatus(StatusPublicacao.DISPONIVEL);     
+
+        publicacoes.save(publicacao);          
+        criarNotificacao(solicitacao.getInteressado(),
+                "Sua solicitacao foi recusada: " + publicacao.getTitulo());
+
+        return solicitacoes.save(solicitacao);     
+    }
+
+    @GetMapping("/api/notificacoes/usuario/{usuarioId}")       
+    public List<Notificacao> notificacoesDoUsuario(@PathVariable Long usuarioId) {
+        return notificacoes.findByUsuarioIdOrderByCriadaEmDesc(usuarioId);     
+    }
+
+    @GetMapping("/api/transacoes/usuario/{usuarioId}")          
+    public List<Transacao> transacoesDoUsuario(@PathVariable Long usuarioId) {   
+         return transacoes.findByPagadorIdOrRecebedorIdOrderByCriadaEmDesc(usuarioId, usuarioId);
+    }      
+        
+    private Usuario buscarUsuarioPorEmail(String email) {
+        return usuarios.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Email nao encontrado"));
+    }
+
+    private Publicacao buscarPublicacao(Long id) {    
+
+        return publicacoes.findById(id)  
+                .orElseThrow(() -> new EntityNotFoundException("Publicacao nao encontrada"));
+    }
+
+    private Solicitacao buscarSolicitacao(Long id) {    
+           
+        return solicitacoes.findById(id)     
+                .orElseThrow(() -> new EntityNotFoundException("Solicitacao nao encontrada"));
+                      
+            }         
+
+    private void criarNotificacao(Usuario usuario, String mensagem) {     
+
+        Notificacao notificacao = new Notificacao();
+
+        notificacao.setUsuario(usuario);
+                                                       
+        notificacao.setMensagem(mensagem);     
+
+        notificacoes.save(notificacao);             
+
+    }
+
+}
