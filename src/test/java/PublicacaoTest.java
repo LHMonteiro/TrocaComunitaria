@@ -45,4 +45,13 @@ class PublicacaoTest {
         ssertThrows(IllegalArgumentException.class,
                 () -> publicacao.validarSolicitante(dono));
     }
+
+    @Test 
+    void deveDisponibilizarPublicacaoAposRecusa(){
+        
+        publicacao.reservar();
+        publicacao.disponibilizar();
+
+        assertEquals(StatusPublicacao.DISPONIVEL, publicacao.getStatus());
+    }
 }
