@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Trocas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eeeeee;
+            margin: 0;
+            color: #243024;
+        }
+
+        header {
+            background: #26712a;
+            color: white;
+            padding: 18px 30px;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 25px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 4px #00000022;
+        }
+
+        h1, h2, h3 {
+            margin-top: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 15px;
+        }
+
+        form {
+            display: grid;
+            gap: 10px;
+        }
+
+        input, select, textarea, button {
+            padding: 10px;
+            font-size: 15px;
+            border: 1px solid #b7c4b7;
+            border-radius: 4px;
+        }
+
+        button {
+            border: 0;
+            background: #26712a;
+            color: white;
+            cursor: pointer;
+        }
+
+        button.secundario {
+            background: #607d3b;
+        }
+
+        button.perigo {
+            background: #a53636;
+        }
+
+        .card {
+            border: 1px solid #d5ddd0;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #fbfcfa;
+        }
+
+        .linha {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .oculto {
+            display: none;
+        }
+
+        .aviso {
+            color: #a53636;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Sistema de Trocas Comunitarias</h1>
+    <p>Projeto simples com usuarios, publicacoes e creditos.</p>
+</header>
+
+<main>
+    <section id="areaLogin">
+        <div class="grid">
+            <div>
+                <h2>Cadastrar usuario</h2>
+                <form id="formCadastro">
+                    <input id="cadNome" placeholder="Nome" required>
+                    <input id="cadEmail" type="email" placeholder="Email" required>
+                    <input id="cadSenha" type="password" placeholder="Senha" required>
+                    <input id="cadContato" placeholder="Contato para entrega ou servico" required>
+                    <button>Cadastrar</button>
+                </form>
+            </div>
+
+            <div>
+                <h2>Login</h2>
+                <form id="formLogin">
+                    <input id="loginEmail" type="email" placeholder="Email" required>
+                    <input id="loginSenha" type="password" placeholder="Senha" required>
+                    <button>Entrar</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="areaSistema" class="oculto">
+        <h2>Perfil</h2>
+        <p id="perfil"></p>
+        <button class="perigo" onclick="sair()">Sair</button>
+    </section>
+
+    <section id="areaPublicacao" class="oculto">
+        <h2>Nova publicacao</h2>
+        <form id="formPublicacao">
+            <input id="pubTitulo" placeholder="Titulo" required>
+            <textarea id="pubDescricao" placeholder="Descricao do item, produto ou servico" required></textarea>
+            <select id="pubTipo">
+                <option value="ITEM">Item</option>
+                <option value="PRODUTO">Produto</option>
+                <option value="SERVICO">Servico</option>
+                <option value="LIVRO">Livro</option>
+            </select>
+            <input id="pubCreditos" type="number" placeholder="Valor em creditos" required>
+            <button>Publicar</button>
+        </form>
+    </section>
+
+    <section id="areaFeed" class="oculto">
+        <h2>Feed</h2>
+        <div id="feed"></div>
+    </section>
+
+    <section id="areaMinhasPublicacoes" class="oculto">
+        <h2>Minhas publicacoes</h2>
+        <div id="minhasPublicacoes"></div>
+    </section>
+
+    <section id="areaSolicitacoes" class="oculto">
+        <h2>Solicitacoes recebidas</h2>
+        <div id="solicitacoes"></div>
+    </section>
+
+    <section id="areaNotificacoes" class="oculto">
+        <h2>Notificacoes</h2>
+        <div id="notificacoes"></div>
+    </section>
+
+    <section id="areaHistorico" class="oculto">
+        <h2>Historico</h2>
+        <div id="historico"></div>
+    </section>
+</main>
+
+<script>
+    // Guarda o usuario logado no navegador para facilitar o teste do projeto.
+    let usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+    const formCadastro = document.getElementById("formCadastro");
+    const formLogin = document.getElementById("formLogin");
+    const formPublicacao = document.getElementById("formPublicacao");
+
+    formCadastro.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        // Pega os dados digitados e manda para o Spring.
+        const novoUsuario = {
+            nome: document.getElementById("cadNome").value,
+            email: document.getElementById("cadEmail").value,
+            senha: document.getElementById("cadSenha").value,
+            contato: document.getElementById("cadContato").value,
+            saldoCreditos: 100
+        };
+
+        const resposta = await fetch("/api/usuarios", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(novoUsuario)
+        });
+
+        usuario = await resposta.json();
+        localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+        formCadastro.reset();
+        atualizarTela();
+    });
+
+    formLogin.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        // Faz login usando email e senha.
+        const dadosLogin = {
+            email: document.getElementById("loginEmail").value,
+            senha: document.getElementById("loginSenha").value
+        };
+
+        const resposta = await fetch("/api/usuarios/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(dadosLogin)
+        });
+
+        if (!resposta.ok) {
+            alert("Email ou senha incorretos.");
+            return;
+        }
+
+        usuario = await resposta.json();
+        localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+        formLogin.reset();
+        atualizarTela();
+    });
+
+    formPublicacao.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        // Cria uma publicacao usando o usuario que esta logado.
+        const publicacao = {
+            usuarioId: usuario.id,
+            titulo: document.getElementById("pubTitulo").value,
+            descricao: document.getElementById("pubDescricao").value,
+            tipo: document.getElementById("pubTipo").value,
+            valorCreditos: Number(document.getElementById("pubCreditos").value)
+        };
+
+        await fetch("/api/publicacoes", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(publicacao)
+        });
+
+        formPublicacao.reset();
+        carregarTudo();
+    });
+
+    async function atualizarTela() {
+        const estaLogado = usuario != null;
+
+        // Mostra ou esconde partes da tela dependendo do login.
+        document.getElementById("areaLogin").classList.toggle("oculto", estaLogado);
+        document.getElementById("areaSistema").classList.toggle("oculto", !estaLogado);
+        document.getElementById("areaPublicacao").classList.toggle("oculto", !estaLogado);
+        document.getElementById("areaFeed").classList.toggle("oculto", !estaLogado);
+        document.getElementById("areaMinhasPublicacoes").classList.toggle("oculto", !estaLogado);
+        document.getElementById("areaSolicitacoes").classList.toggle("oculto", !estaLogado);
+        document.getElementById("areaNotificacoes").classList.toggle("oculto", !estaLogado);
+        document.getElementById("areaHistorico").classList.toggle("oculto", !estaLogado);
+
+        if (estaLogado) {
+            await carregarTudo();
+        }
+    }
+
+    async function carregarTudo() {
+        // Atualiza todas as listas da pagina.
+        await atualizarUsuario();
+        await carregarFeed();
+        await carregarMinhasPublicacoes();
+        await carregarSolicitacoes();
+        await carregarNotificacoes();
+        await carregarHistorico();
+    }
+
+    async function atualizarUsuario() {
+        const resposta = await fetch("/api/usuarios/" + usuario.id);
+        usuario = await resposta.json();
+        localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+
+        document.getElementById("perfil").innerHTML =
+            `<strong>${usuario.nome}</strong><br>Email: ${usuario.email}<br>Contato: ${usuario.contato}<br>Saldo: ${usuario.saldoCreditos} creditos`;
+    }
+
+    async function carregarFeed() {
+        // Busca publicacoes de outros usuarios.
+        const resposta = await fetch("/api/publicacoes/feed/" + usuario.id);
+        const publicacoes = await resposta.json();
+        const feed = document.getElementById("feed");
+        feed.innerHTML = "";
+
+        publicacoes.forEach(function (p) {
+            const div = document.createElement("div");
+            div.className = "card";
+            div.innerHTML = `
+                <h3>${p.titulo}</h3>
+                <p>${p.descricao}</p>
+                <p>Tipo: ${p.tipo} | Creditos: ${p.valorCreditos}</p>
+                <p>Dono: ${p.dono.nome}</p>
+                <button onclick="demonstrarInteresse(${p.id})">Tenho interesse</button>
+            `;
+            feed.appendChild(div);
+        });
+
+        if (feed.innerHTML === "") {
+            feed.innerHTML = "<p>Nao tem publicacoes de outros usuarios no momento.</p>";
+        }
+    }
+
+    async function carregarMinhasPublicacoes() {
+        const resposta = await fetch("/api/publicacoes/usuario/" + usuario.id);
+        const publicacoes = await resposta.json();
+        const lista = document.getElementById("minhasPublicacoes");
+        lista.innerHTML = "";
+
+        publicacoes.forEach(function (p) {
+            const div = document.createElement("div");
+            div.className = "card";
+            div.innerHTML = `
+                <strong>${p.titulo}</strong><br>
+                ${p.descricao}<br>
+                Tipo: ${p.tipo}<br>
+                Creditos: ${p.valorCreditos}<br>
+                Status: ${p.status}
+                <div class="linha">
+                    <button class="perigo" onclick="cancelarPublicacao(${p.id})">Cancelar</button>
+                </div>
+            `;
+            lista.appendChild(div);
+        });
+
+        if (lista.innerHTML === "") {
+            lista.innerHTML = "<p>Voce ainda nao criou publicacoes.</p>";
+        }
+    }
+
+    async function carregarSolicitacoes() {
+        const resposta = await fetch("/api/solicitacoes/recebidas/" + usuario.id);
+        const solicitacoes = await resposta.json();
+        const lista = document.getElementById("solicitacoes");
+        lista.innerHTML = "";
+
+        solicitacoes.forEach(function (s) {
+            const div = document.createElement("div");
+            div.className = "card";
+            div.innerHTML = `
+                <strong>${s.publicacao.titulo}</strong><br>
+                Interessado: ${s.interessado.nome}<br>
+                Creditos: ${s.publicacao.valorCreditos}<br>
+                Status: ${s.status}
+                ${s.status === "PENDENTE" ? `
+                    <div class="linha">
+                        <button onclick="responderSolicitacao(${s.id}, 'aceitar')">Aceitar</button>
+                        <button class="perigo" onclick="responderSolicitacao(${s.id}, 'recusar')">Recusar</button>
+                    </div>
+                ` : ""}
+            `;
+            lista.appendChild(div);
+        });
+
+        if (lista.innerHTML === "") {
+            lista.innerHTML = "<p>Nenhuma solicitacao recebida.</p>";
+        }
+    }
+
+    async function carregarNotificacoes() {
+        const resposta = await fetch("/api/notificacoes/usuario/" + usuario.id);
+        const notificacoes = await resposta.json();
+        const lista = document.getElementById("notificacoes");
+        lista.innerHTML = "";
+
+        notificacoes.forEach(function (n) {
+            const div = document.createElement("div");
+            div.className = "card";
+            div.innerHTML = `${n.mensagem}<br><small>${formatarData(n.criadaEm)}</small>`;
+            lista.appendChild(div);
+        });
+
+        if (lista.innerHTML === "") {
+            lista.innerHTML = "<p>Nenhuma notificacao.</p>";
+        }
+    }
+
+    async function carregarHistorico() {
+        const resposta = await fetch("/api/transacoes/usuario/" + usuario.id);
+        const transacoes = await resposta.json();
+        const lista = document.getElementById("historico");
+        lista.innerHTML = "";
+
+        transacoes.forEach(function (t) {
+            const div = document.createElement("div");
+            div.className = "card";
+            div.innerHTML = `
+                Publicacao: ${t.publicacao.titulo}<br>
+                Pagador: ${t.pagador.nome}<br>
+                Recebedor: ${t.recebedor.nome}<br>
+                Creditos: ${t.creditos}<br>
+                Data: ${formatarData(t.criadaEm)}
+            `;
+            lista.appendChild(div);
+        });
+
+        if (lista.innerHTML === "") {
+            lista.innerHTML = "<p>Nenhuma transacao concluida.</p>";
+        }
+    }
+
+    async function demonstrarInteresse(publicacaoId) {
+        // Quando clica em "Tenho interesse", cria uma solicitacao.
+        const resposta = await fetch("/api/solicitacoes/publicacao/" + publicacaoId, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({usuarioId: usuario.id})
+        });
+
+        if (!resposta.ok) {
+            alert(await pegarMensagemErro(resposta));
+        }
+
+        carregarTudo();
+    }
+
+    async function responderSolicitacao(id, resposta) {
+        // O dono da publicacao pode aceitar ou recusar.
+        const retorno = await fetch("/api/solicitacoes/" + id + "/" + resposta, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({usuarioId: usuario.id})
+        });
+
+        if (!retorno.ok) {
+            alert(await pegarMensagemErro(retorno));
+        }
+
+        carregarTudo();
+    }
+
+    async function cancelarPublicacao(id) {
+        await fetch("/api/publicacoes/" + id + "/cancelar", {
+            method: "PATCH",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({usuarioId: usuario.id})
+        });
+
+        carregarTudo();
+    }
+
+    function sair() {
+        localStorage.removeItem("usuarioLogado");
+        usuario = null;
+        atualizarTela();
+    }
+
+    function formatarData(data) {
+        return new Date(data).toLocaleString("pt-BR");
+    }
+
+    async function pegarMensagemErro(resposta) {
+        try {
+            const erro = await resposta.json();
+            return erro.detail || erro.message || "Nao foi possivel concluir a operacao.";
+        } catch (e) {
+            return "Nao foi possivel concluir a operacao.";
+        }
+    }
+
+    atualizarTela();
+</script>
+</body>
+</html>
