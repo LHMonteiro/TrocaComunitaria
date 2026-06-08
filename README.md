@@ -1,6 +1,6 @@
 # TrocaComunitaria 
 
-MENSAGEM DESTINADA A AVALIÇÃO: O projeto foi feito as pressas, pois não tive tempo nas ultimas semanas devido a preparação para o nascimento da minha filha, por isso não me atentei que deveria seguir o TDD e acabei fazendo da maneira mais rápida que eu conseguia para poder entregar algo. Então vai ter muita coisa faltando nesse projeto e eu fiz uso de ia para me ajudar no raciocinio devido ao curto tempo que eu tinha disponivel. Bom, espero que goste. 
+MENSAGEM DESTINADA À AVALIÇÃO: O projeto foi feito às pressas, pois não tive tempo nas últimas semanas devido a preparação para o nascimento da minha filha. Por isso não me atentei que deveria seguir o TDD e acabei optando pela abordagem mais rápida para que eu podesse entregar algo. Então vai ter muita coisa faltando nesse projeto e infelizmente eu tive que recorrer ao uso de ia para me ajudar no raciocinio, devido ao curto tempo que eu tinha disponivel. Bom, espero que goste. 
 
 ## Sobre o Projeto
 
