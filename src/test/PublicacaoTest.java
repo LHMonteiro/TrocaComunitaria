@@ -34,7 +34,7 @@ class PublicacaoTest {
         assertEquals(StatusPublicacao.RESERVADA, publicacao.getStatus());
     }
 
-    @test 
+    @Test 
     void deveLancarExcecaoAoCancelarSeNaoForDono() {
         assertThrows(IllegalArgumentException.class, () -> publicacao.cancelar(99L));
     }
