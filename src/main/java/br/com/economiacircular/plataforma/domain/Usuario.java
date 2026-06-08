@@ -15,7 +15,42 @@ public class Usuario {
     private String email;      
     private String senha;   
     private String contato;    
-    private Integer saldoCreditos;    
+    private Integer saldoCreditos;
+     
+
+    //inicializar o saldo do usuario
+
+    public void inicializarSaldo() {
+        this.saldoCreditos = 100;
+    }
+
+
+    //verificar se a  senha está correta
+    public boolean senhaCorreta(String senhaInformada) {
+        return this.senha.equals(senhaInformada);
+    }
+
+
+
+    //execeção caso o usuario esteja com saldo insufucinete
+    public void creditarSaldo(int valor) {
+        if (valor <= 0) {
+            throw new IllegalArgumentException("Valor para crédito deve ser positivo");
+        }
+        this.saldoCreditos += valor;
+    }
+
+
+
+    public void debitarSaldo(int valor) {
+        if (valor <= 0) {
+            throw new IllegalArgumentException("Valor para débito deve ser positivo");
+        }
+        if (this.saldoCreditos < valor) {
+            throw new IllegalArgumentException("Saldo insuficiente para realizar a troca");
+        }
+        this.saldoCreditos -= valor;
+    }
 
     public Long getId() {    
         return id;
