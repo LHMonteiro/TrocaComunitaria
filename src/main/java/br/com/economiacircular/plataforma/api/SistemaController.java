@@ -89,7 +89,7 @@ public class SistemaController {
     @GetMapping("/api/publicacoes/usuario/{usuarioId}")
     public List<Publicacao> publicacoesDoUsuario(@PathVariable Long usuarioId) {
         
-        return publicacoes.findByDonoId(usuarioId);
+         return publicacoes.findByDonoId(usuarioId);
     
     }
 
@@ -97,15 +97,9 @@ public class SistemaController {
     public Publicacao cancelamentoDePublicacao(@PathVariable Long id, @RequestBody PublicacaoRequest request) {
         Publicacao publicacao = buscarPublicacao(id);
         
-        if (!publicacao.getDono().getId().equals(request.usuarioId)) {
-            
-            throw new IllegalArgumentException("Somente o dono pode cancelar esta publicacao");
-        
-        }
-        
         publicacao.cancelar(request.usuarioId);
          
-        return publicacoes.save(publicacao);       
+         return publicacoes.save(publicacao);       
     }
                                 
     @PostMapping("/api/solicitacoes/publicacao/{publicacaoId}")         
@@ -128,10 +122,6 @@ public class SistemaController {
         solicitacao.setPublicacao(publicacao);
 
         solicitacao.setInteressado(interessado);
-
-        publicacao.setStatus(StatusPublicacao.RESERVADA);
-
-        publicacoes.save(publicacao);
 
         criarNotificacao(publicacao.getDono(),
                 interessado.getNome() + " tem interesse em: " + publicacao.getTitulo());

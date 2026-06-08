@@ -2,6 +2,8 @@ package br.com.economiacircular.plataforma.domain;
  
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.beans.Transient;
  
 class UsuarioTest {
  
@@ -20,13 +22,10 @@ class UsuarioTest {
     }
 
      @Test
-    void devePermitirDebitarCreditos() {
+    void deveInicializarSaldoCom100Creditos() {
         Usuario usuario = new Usuario();   
-        usuario.setSaldoCreditos(100);   
- 
-        usuario.setSaldoCreditos(usuario.getSaldoCreditos() - 30);   
- 
-        assertEquals(70, usuario.getSaldoCreditos());   
+        usuario.inicializarSaldo();
+        assertEquals(100, usuario.getSaldoCreditos());  
     }
  
     @Test
@@ -37,6 +36,24 @@ class UsuarioTest {
         usuario.setSaldoCreditos(usuario.getSaldoCreditos() + 30);   
  
         assertEquals(80, usuario.getSaldoCreditos());    
+    }
+
+    @Test
+    void deveValidarSenhaCorreta(){
+        Usuario usuario = new Usuario(); 
+        usuario.getSenha("senha123");
+        assertTrue(usuario.senhaCorreta("senha123"));
+
+        assertFalse(usuario.senhaCorreta("errada"));
+    }
+
+    @Test
+    void deveCreditarSaldo(){
+        Usuario usuario = new Usuario();
+        usuario.setSaldoCreditos(50);
+        usuario.creditarSaldo(30);
+
+        assertEquals(80, usuario.getSaldoCreditos());
     }
 
 
