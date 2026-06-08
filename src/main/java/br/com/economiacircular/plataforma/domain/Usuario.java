@@ -1,7 +1,11 @@
 package br.com.economiacircular.plataforma.domain;    
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuarios")
@@ -34,25 +38,20 @@ public class Usuario {
 
     //execeção caso o usuario esteja com saldo insufucinete
     public void creditarSaldo(int verificarValor) {
-        if (verificarValor <= 0) {
+        Creditos atual = new Creditos(this.saldoCreditos);
+        Creditos resultado = atual.somar(new Creditos(verificarValor));
 
-            throw new IllegalArgumentException("Valor para crédito deve ser positivo");
-
-        }
-
-        this.saldoCreditos += verificarValor;
+        this.saldoCreditos = resultado.getValor();
     }
 
 
 
     public void debitarSaldo(int verificarValor) {
-        if (verificarValor <= 0) {
-            throw new IllegalArgumentException("Valor para débito deve ser positivo");
-        }
-        if (this.saldoCreditos < verificarValor) {
-            throw new IllegalArgumentException("Saldo insuficiente para realizar a troca");
-        }
-        this.saldoCreditos -= verificarValor;
+        Creditos atual = new Creditos(this.saldoCreditos);
+        Creditos resultado = atual.subtrair(new Creditos(verificarValor));
+
+        this.saldoCreditos = resultado.getValor();
+
     }
 
     public Long getId() {    
