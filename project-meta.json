@@ -1,0 +1,9 @@
+{
+  "curso": "Ciência da Computação",
+  "disciplina": "Projeto de porgramação",
+  "tema_escolhido": "Marketplace de Economia Circular (Troca de Objetos e Livros)",
+  "linguagem": "Java",
+  "gerenciador_dependencias": "Maven",
+  "integrantes": 
+    {"nome": "Luiz Henrique Marques Monteiro", "github_username": "LHMonteiro"}
+}
