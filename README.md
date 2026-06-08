@@ -1,6 +1,6 @@
 # TrocaComunitaria 
 
-Sistema de troca de produtos e serviços baseado em tokens de crédito entre membros de uma comunidade.
+MENSAGEM DESTINADA A AVALIÇÃO: O projeto foi feito as pressas, pois não tive tempo nas ultimas semanas devido a preparação para o nascimento da minha filha, por isso não me atentei que deveria seguir o TDD  e acabei fazendo da maneira mais rápida que eu conseguia para poder entregar algo. Então vai ter muita coisa faltando nesse projeto.
 
 ## Sobre o Projeto
 
@@ -97,10 +97,10 @@ src/
 
 | Nome | GitHub |
 |------|--------|
-| Henrique Monteiro | [@LHMonteiro](https://github.com/LHMonteiro) |
+| luiz Henrique Maques Monteiro | [@LHMonteiro](https://github.com/LHMonteiro) |
 
 ## Disciplina
 
-- **Curso:** Nome do Curso
-- **Disciplina:** Orientação a Objetos
-- **Instituição:** Nome da Instituição
+- **Curso:** ciencia da computação
+- **Disciplina:** Projeto de porgramação
+- **Instituição:** Afya
