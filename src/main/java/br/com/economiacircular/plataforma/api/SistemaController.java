@@ -82,6 +82,7 @@ public class SistemaController {
     public List<Publicacao> feed(@PathVariable Long usuarioId) {
         
         buscarUsuario(usuarioId);
+
          return publicacoes.findByStatusAndDonoIdNot(StatusPublicacao.DISPONIVEL, usuarioId);
     }
 
@@ -115,15 +116,21 @@ public class SistemaController {
         
         Usuario interessado = buscarUsuario(request.usuarioId);     
 
-        publicacao.validarSolicitante(interessado);      
-        publicacao.reservar();                             
-        publicacoes.save(publicacao);
+        publicacao.validarSolicitante(interessado);
+
+        publicacao.reservar();                                
+            
+        publicacoes.save(publicacao);    
+           
                                     
         Solicitacao solicitacao = new Solicitacao();
+
         solicitacao.setPublicacao(publicacao);
+
         solicitacao.setInteressado(interessado);
 
         publicacao.setStatus(StatusPublicacao.RESERVADA);
+
         publicacoes.save(publicacao);
 
         criarNotificacao(publicacao.getDono(),
@@ -163,7 +170,9 @@ public class SistemaController {
             throw new IllegalArgumentException("O interessado nao tem creditos suficientes");
         
         }    
-                                      
+                    
+        // Não mexer nisso aqui. Complicado de mais.
+
         interessado.setSaldoCreditos(interessado.getSaldoCreditos() - publicacao.getValorCreditos());
         dono.setSaldoCreditos(dono.getSaldoCreditos() + publicacao.getValorCreditos());
         usuarios.save(interessado);
@@ -176,6 +185,7 @@ public class SistemaController {
         solicitacoes.save(solicitacao);
 
         Transacao transacao = new Transacao();
+
         transacao.setPublicacao(publicacao);
         transacao.setPagador(interessado);
         transacao.setRecebedor(dono);
@@ -196,7 +206,7 @@ public class SistemaController {
        
         Solicitacao solicitacao = buscarSolicitacao(id);      
 
-        
+
         solicitacao.recusar(request.usuarioId);      
  
         publicacoes.save(solicitacao.getPublicacao());     
@@ -208,17 +218,23 @@ public class SistemaController {
 
     @GetMapping("/api/notificacoes/usuario/{usuarioId}")       
     public List<Notificacao> notificacoesDoUsuario(@PathVariable Long usuarioId) {
-        return notificacoes.findByUsuarioIdOrderByCriadaEmDesc(usuarioId);     
+
+        return notificacoes.findByUsuarioIdOrderByCriadaEmDesc(usuarioId);       
+
     }
 
     @GetMapping("/api/transacoes/usuario/{usuarioId}")          
-    public List<Transacao> transacoesDoUsuario(@PathVariable Long usuarioId) {   
-         return transacoes.findByPagadorIdOrRecebedorIdOrderByCriadaEmDesc(usuarioId, usuarioId);
+    public List<Transacao> transacoesDoUsuario(@PathVariable Long usuarioId) { 
+
+         return transacoes.findByPagadorIdOrRecebedorIdOrderByCriadaEmDesc(usuarioId, usuarioId);   
+
     }      
         
     private Usuario buscarUsuarioPorEmail(String email) {
-        return usuarios.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Email nao encontrado"));
+
+        return usuarios.findByEmail(email)      
+                .orElseThrow(() -> new EntityNotFoundException("Email nao encontrado"));    
+
     }
 
     private Publicacao buscarPublicacao(Long id) {    

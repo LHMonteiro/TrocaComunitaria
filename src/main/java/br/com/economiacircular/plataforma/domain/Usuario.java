@@ -18,7 +18,7 @@ public class Usuario {
     private Integer saldoCreditos;
      
 
-    //inicializar o saldo do usuario
+    //inicializar o saldo do usuario. 
 
     public void inicializarSaldo() {
         this.saldoCreditos = 100;
@@ -33,23 +33,26 @@ public class Usuario {
 
 
     //execeção caso o usuario esteja com saldo insufucinete
-    public void creditarSaldo(int valor) {
-        if (valor <= 0) {
+    public void creditarSaldo(int verificarValor) {
+        if (verificarValor <= 0) {
+
             throw new IllegalArgumentException("Valor para crédito deve ser positivo");
+
         }
-        this.saldoCreditos += valor;
+
+        this.saldoCreditos += verificarValor;
     }
 
 
 
-    public void debitarSaldo(int valor) {
-        if (valor <= 0) {
+    public void debitarSaldo(int verificarValor) {
+        if (verificarValor <= 0) {
             throw new IllegalArgumentException("Valor para débito deve ser positivo");
         }
-        if (this.saldoCreditos < valor) {
+        if (this.saldoCreditos < verificarValor) {
             throw new IllegalArgumentException("Saldo insuficiente para realizar a troca");
         }
-        this.saldoCreditos -= valor;
+        this.saldoCreditos -= verificarValor;
     }
 
     public Long getId() {    
@@ -81,19 +84,19 @@ public class Usuario {
         this.senha = senha;
      }
 
-
+                   
     public String getContato() { 
         return contato; 
     }    
-
+                 
     public void setContato(String contato) { 
         this.contato = contato;
      }   
-
+       
     public Integer getSaldoCreditos() {
          return saldoCreditos; 
         }
-
+          
           
     public void setSaldoCreditos(Integer saldoCreditos) { 
         this.saldoCreditos = saldoCreditos; 

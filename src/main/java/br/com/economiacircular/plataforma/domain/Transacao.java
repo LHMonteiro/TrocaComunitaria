@@ -15,12 +15,12 @@ public class Transacao{
  
 
     @ManyToOne
-    @JoinColumn(name="publicacao_id")
-    private  Publicacao publicacao;
+    @JoinColumn(name="publicacao_id")   
+    private  Publicacao publicacao;   
 
     @ManyToOne
-    @JoinColumn(name="pagador_id")
-    private Usuario pagador;
+    @JoinColumn(name="pagador_id")     
+    private Usuario pagador;     
 
     @ManyToOne
     @JoinColumn(name="recebedor_id")

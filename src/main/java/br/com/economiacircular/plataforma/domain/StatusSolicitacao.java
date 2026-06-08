@@ -1,7 +1,9 @@
 package br.com.economiacircular.plataforma.domain;
 
 public enum StatusSolicitacao {    
-    PENDENTE,    
+
+    PENDENTE,     
     ACEITA,   
     RECUSADA   
+      
 }     

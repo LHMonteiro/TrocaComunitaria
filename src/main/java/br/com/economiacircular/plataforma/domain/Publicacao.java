@@ -18,23 +18,25 @@ public class Publicacao {
      @Enumerated(EnumType.STRING)
     private StatusPublicacao status = StatusPublicacao.DISPONIVEL;
 
-
-
-
      @ManyToOne
     @JoinColumn(name = "dono_id")
     private Usuario dono;
 
 
     public void reservar() {
+
         if (this.status != StatusPublicacao.DISPONIVEL) {
+             
             throw new IllegalArgumentException("Esta publicacao nao esta disponivel");
+        
         }
+
         this.status = StatusPublicacao.RESERVADA;
     }
 
 
     public void concluir() {
+
         this.status = StatusPublicacao.CONCLUIDA;
     }
 
@@ -44,21 +46,30 @@ public class Publicacao {
 
 
     public void cancelar(Long usuarioId) {
+        
         if (!pertenceAo(usuarioId)) {
-            throw new IllegalArgumentException("Somente o dono pode cancelar esta publicacao");
+
+             throw new IllegalArgumentException("Somente o dono pode cancelar esta publicacao");
         }
+        
         this.status = StatusPublicacao.CANCELADA;
     }
 
     public boolean pertenceAo(Long usuarioId) {
-        return this.dono.getId().equals(usuarioId);
-    }
+
+         return this.dono.getId().equals(usuarioId);
+    
+        }
 
 
      public void validarSolicitante(Usuario solicitante) {
+        
         if (pertenceAo(solicitante.getId())) {
+             
             throw new IllegalArgumentException("Voce nao pode solicitar sua propria publicacao");
+        
         }
+        
     }
 
     public Long getId() { 

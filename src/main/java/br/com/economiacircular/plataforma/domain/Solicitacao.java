@@ -11,12 +11,12 @@ public class Solicitacao {
     @GeneratedValue(strategy= GenerationType.IDENTITY)      
     private Long id;
       
-
+         
     @ManyToOne     
-    @JoinColumn(name="publicacao_id")      
+    @JoinColumn(name="publicacao_id")         
     private Publicacao publicacao;    
 
-
+          
     @ManyToOne
     @JoinColumn(name="interessado_id")           
     private Usuario interessado;      
@@ -27,16 +27,22 @@ public class Solicitacao {
 
 
     public void aceitar(Long usuarioId) {
+
         if (!publicacao.pertenceAo(usuarioId)) {
-            throw new IllegalArgumentException("Somente o dono pode aceitar esta solicitacao");
-        }
-        if (this.status != StatusSolicitacao.PENDENTE) {
+
+             throw new IllegalArgumentException("Somente o dono pode aceitar esta solicitacao");
+        
+            }
+        
+            if (this.status != StatusSolicitacao.PENDENTE) {
             throw new IllegalArgumentException("Esta solicitacao ja foi respondida");
+        
         }      
 
     
      interessado.debitarSaldo(publicacao.getValorCreditos());
-        publicacao.getDono().creditarSaldo(publicacao.getValorCreditos());
+
+         publicacao.getDono().creditarSaldo(publicacao.getValorCreditos());
  
         // Atualiza estados
         publicacao.concluir();
@@ -44,29 +50,43 @@ public class Solicitacao {
     }
 
     public void recusar(Long usuarioId) {
+
         if (!publicacao.pertenceAo(usuarioId)) {
+            
             throw new IllegalArgumentException("Somente o dono pode recusar esta solicitacao");
+        
         }
+        
         if (this.status != StatusSolicitacao.PENDENTE) {
+        
             throw new IllegalArgumentException("Esta solicitacao ja foi respondida");
+        
         }
- 
+       
         publicacao.disponibilizar();
+
         this.status = StatusSolicitacao.RECUSADA;
     }
 
      public String mensagemAceiteParaDono() {
-        return "Troca concluida: " + publicacao.getTitulo()
-                + ". Contato do interessado: " + interessado.getContato();
+
+        return "Troca concluida: " + publicacao.getTitulo()      
+                + ". Contato do interessado: " + interessado.getContato();          
+           
     }
  
     public String mensagemAceiteParaInteressado() {
-        return "Troca concluida: " + publicacao.getTitulo()
-                + ". Contato do dono: " + publicacao.getDono().getContato();
+
+        return "Troca concluida: " + publicacao.getTitulo()     
+                + ". Contato do dono: " + publicacao.getDono().getContato();    
+            
     }
 
     public String mensagemRecusa() {
-        return "Sua solicitacao foi recusada: " + publicacao.getTitulo();
+
+        return "Sua solicitacao foi recusada: " + publicacao.getTitulo();       
+             
+
     }
        
     public Long getId() {   
@@ -97,7 +117,7 @@ public class Solicitacao {
          return status;    
         }
            
-    public void setStatus(StatusSolicitacao status) {    
+    public void setStatus(StatusSolicitacao status) {       
         this.status = status;     
     }     
 }
