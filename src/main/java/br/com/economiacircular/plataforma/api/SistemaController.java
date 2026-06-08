@@ -1,5 +1,5 @@
 package br.com.economiacircular.plataforma.api;
-
+ 
 import br.com.economiacircular.plataforma.api.dto.LoginRequest;
 import br.com.economiacircular.plataforma.api.dto.PublicacaoRequest;
 import br.com.economiacircular.plataforma.api.dto.SolicitacaoRequest;
@@ -9,7 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
+ 
 import java.util.List;
 
 @RestController
@@ -37,20 +37,17 @@ public class SistemaController {
     @ResponseStatus(HttpStatus.CREATED)
     public Usuario cadastrarUsuario(@RequestBody Usuario usuario) {
 
-        if (usuario.getSaldoCreditos() == null) {
+        usuario.inicializarSaldo();
 
-            usuario.setSaldoCreditos(100);
-        }
-
-         return usuarios.save(usuario);
+        return usuarios.save(usuario);
     }
 
     @PostMapping("/api/usuarios/login")
     public Usuario loginUsuario(@RequestBody LoginRequest request) {
 
-        Usuario usuario = buscarUsuarioPorEmail(request.email);
+       Usuario usuario = buscarUsuarioPorEmail(request.email);    
 
-        if (!usuario.getSenha().equals(request.senha)) {
+        if (!usuario.senhaCorreta(request.senha)) {
 
             throw new IllegalArgumentException("Senha incorreta");
         }
@@ -105,7 +102,7 @@ public class SistemaController {
         
         }
         
-        publicacao.setStatus(StatusPublicacao.CANCELADA);
+        publicacao.cancelar(request.usuarioId);
          
         return publicacoes.save(publicacao);       
     }
@@ -118,15 +115,9 @@ public class SistemaController {
         
         Usuario interessado = buscarUsuario(request.usuarioId);     
 
-        if (publicacao.getDono().getId().equals(interessado.getId())) {    
-           
-            throw new IllegalArgumentException("Voce nao pode pedir sua propria publicacao");      
-        }
-
-        if (publicacao.getStatus() != StatusPublicacao.DISPONIVEL) {
-            throw new IllegalArgumentException("Esta publicacao nao esta disponivel");       
-              
-        }
+        publicacao.validarSolicitante(interessado);      
+        publicacao.reservar();                             
+        publicacoes.save(publicacao);
                                     
         Solicitacao solicitacao = new Solicitacao();
         solicitacao.setPublicacao(publicacao);
@@ -204,20 +195,15 @@ public class SistemaController {
     public Solicitacao recusarSolicitacao(@PathVariable Long id, @RequestBody SolicitacaoRequest request) {
        
         Solicitacao solicitacao = buscarSolicitacao(id);      
-        Publicacao publicacao = solicitacao.getPublicacao();   
 
-        if (!publicacao.getDono().getId().equals(request.usuarioId)) {    
-            throw new IllegalArgumentException("Somente o dono pode recusar esta solicitacao");
-        }
-                                              
-        solicitacao.setStatus(StatusSolicitacao.RECUSADA);       
-        publicacao.setStatus(StatusPublicacao.DISPONIVEL);     
+        
+        solicitacao.recusar(request.usuarioId);      
+ 
+        publicacoes.save(solicitacao.getPublicacao());     
 
-        publicacoes.save(publicacao);          
-        criarNotificacao(solicitacao.getInteressado(),
-                "Sua solicitacao foi recusada: " + publicacao.getTitulo());
-
-        return solicitacoes.save(solicitacao);     
+        criarNotificacao(solicitacao.getInteressado(), solicitacao.mensagemRecusa());  
+ 
+        return solicitacoes.save(solicitacao);  
     }
 
     @GetMapping("/api/notificacoes/usuario/{usuarioId}")       
