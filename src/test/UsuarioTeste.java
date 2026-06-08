@@ -41,7 +41,7 @@ class UsuarioTest {
     @Test
     void deveValidarSenhaCorreta(){
         Usuario usuario = new Usuario(); 
-        usuario.getSenha("senha123");
+        usuario.setSenha("senha123");
         assertTrue(usuario.senhaCorreta("senha123"));
 
         assertFalse(usuario.senhaCorreta("errada"));
@@ -77,7 +77,7 @@ class UsuarioTest {
         usuario.setSaldoCreditos(100);
          
         
-        ssertThrows(IllegalArgumentException.class, () -> usuario.creditarSaldo(-10));    
+        assertThrows(IllegalArgumentException.class, () -> usuario.creditarSaldo(-10));    
     }
 
 
