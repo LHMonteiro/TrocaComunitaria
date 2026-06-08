@@ -24,25 +24,24 @@ class PublicacaoTest {
     }
  
     @Test
-    void deveIniciarComoDisponivel() {    
+    void deveIniciarComoDisponivel() {
         assertEquals(StatusPublicacao.DISPONIVEL, publicacao.getStatus());
     }
 
     @Test
-    void deveReservarPublicacaoDisponivel() {      
-        publicacao.reservar();   
-        assertEquals(StatusPublicacao.RESERVADA, publicacao.getStatus());    
+    void deveReservarPublicacaoDisponivel() {
+        publicacao.reservar();
+        assertEquals(StatusPublicacao.RESERVADA, publicacao.getStatus());
     }
 
     @test 
-    void deveLancarExcecaoAoCancelarSeNaoForDono(){
-
-    assertThrows(IllegalArgumentException.class, () -> publicacao.cancelar(99L));
+    void deveLancarExcecaoAoCancelarSeNaoForDono() {
+        assertThrows(IllegalArgumentException.class, () -> publicacao.cancelar(99L));
     }
 
     @Test
-    void deveLancarExcecaoQuandoDonoTentaSolicitarSuaPublicacao(){
-        ssertThrows(IllegalArgumentException.class,
+    void deveLancarExcecaoQuandoDonoTentaSolicitarSuaPublicacao() {
+        assertThrows(IllegalArgumentException.class,
                 () -> publicacao.validarSolicitante(dono));
     }
 
