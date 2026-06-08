@@ -12,25 +12,27 @@ O TrocaComunitaria é uma plataforma que permite que usuários publiquem ofertas
 - **Spring Boot 3.2**
 - **Spring Data JPA**
 - **Banco de dados H2** (em memória)
-- **Maven**
+- **Maven 3.8**
 
 ## Funcionalidades
 
 - Cadastro e login de usuários
-- Publicação de ofertas (produtos ou serviços)
-- Feed de publicações disponíveis
+- Publicação de ofertas (adicionei opção de servirços)
+- Feed de publicações disponíveis (não está muito bem estrturada, não tive tempo para mexer nisso)
 - Sistema de solicitação de troca
-- Aceite ou recusa de solicitações
+- Aceite ou recusa de solicitações 
 - Transferência automática de créditos ao concluir uma troca
-- Notificações para o usuário
-- Histórico de transações
+- Notificações para o usuário (não está muito bem estrturada, não tive tempo para mexer nisso)
+- Histórico de transações (não está muito bem estrturada, não tive tempo para mexer nisso)
+
 
 ## Como executar
 
 ### Pré-requisitos
 
-- Java 17 ou superior
-- Maven 3.8 ou superior
+- Java 17 
+- Maven 3.8 
+
 
 ### Passos
 
@@ -40,23 +42,17 @@ git clone https://github.com/LHMonteiro/TrocaComunitaria.git
 cd TrocaComunitaria
 ```
 
-2. Execute a aplicação:
+2. Para executar à aplicação:
 ```bash
 mvn spring-boot:run
 ```
 
-3. Acesse a interface no navegador:
+3. Acesse .a interface no navegador:
 ```
 http://localhost:8080
 ```
 
-4. Para acessar o console do banco de dados H2:
-```
-http://localhost:8080/h2-console
-JDBC URL: jdbc:h2:mem:marketplace
-Usuário: sa
-Senha: (deixar em branco)
-```
+
 
 ## Endpoints da API
 
@@ -75,6 +71,7 @@ Senha: (deixar em branco)
 | POST | `/api/solicitacoes/{id}/recusar` | Recusar solicitação |
 | GET | `/api/notificacoes/usuario/{usuarioId}` | Ver notificações |
 | GET | `/api/transacoes/usuario/{usuarioId}` | Ver histórico de transações |
+
 
 ## Estrutura do Projeto
 

@@ -14,7 +14,7 @@ class PublicacaoTest {
         dono = new Usuario();
 
         dono.setId(1L);  
-             
+
         dono.setNome("Carlos");   
  
         publicacao = new Publicacao();
@@ -32,5 +32,17 @@ class PublicacaoTest {
     void deveReservarPublicacaoDisponivel() {      
         publicacao.reservar();   
         assertEquals(StatusPublicacao.RESERVADA, publicacao.getStatus());    
+    }
+
+    @test 
+    void deveLancarExcecaoAoCancelarSeNaoForDono(){
+
+    assertThrows(IllegalArgumentException.class, () -> publicacao.cancelar(99L));
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoDonoTentaSolicitarSuaPublicacao(){
+        ssertThrows(IllegalArgumentException.class,
+                () -> publicacao.validarSolicitante(dono));
     }
 }

@@ -57,4 +57,28 @@ class UsuarioTest {
     }
 
 
+    @Test
+    void deveLancarExcecaoQuandoSaldoInsuficiente(){
+        Usuario usuario = new Usuario();
+        usuario.setSaldoCreditos(20);
+
+         IllegalArgumentException excecao = assertThrows(     
+                IllegalArgumentException.class,   
+                () -> usuario.debitarSaldo(50)    
+        );
+ 
+        assertEquals("Saldo insuficiente para realizar a troca", excecao.getMessage());  
+    }
+
+
+    @Test
+    void deveLancarExcecaoAoCreditarValorNegativo(){
+        Usuario usuario = new Usuario();
+        usuario.setSaldoCreditos(100);
+         
+        
+        ssertThrows(IllegalArgumentException.class, () -> usuario.creditarSaldo(-10));    
+    }
+
+
 }
